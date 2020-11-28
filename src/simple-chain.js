@@ -1,25 +1,49 @@
-const CustomError = require("../extensions/custom-error");
-
 const chainMaker = {
+  chain: [],
   getLength() {
-    throw new CustomError('Not implemented');
-    // remove line with error and write your code here
+    return this.chain.length;
   },
   addLink(value) {
-    throw new CustomError('Not implemented');
-    // remove line with error and write your code here
+    value = value === undefined? '' : value;
+    this.chain.push(value);
+    return this;
   },
   removeLink(position) {
-    throw new CustomError('Not implemented');
-    // remove line with error and write your code here
+    try {
+      this.validatePosition(position);
+    } catch (e) {
+      this.chain = [];
+      throw e;
+    }
+    this.chain.splice(position - 1, 1);
+    return this;
   },
   reverseChain() {
-    throw new CustomError('Not implemented');
-    // remove line with error and write your code here
+    this.chain.reverse();
+    return this;
   },
   finishChain() {
-    throw new CustomError('Not implemented');
-    // remove line with error and write your code here
+    const finishedChain = this.chain
+        .map(link => `( ${link} )`)
+        .join('~~');
+    this.chain = [];
+    return finishedChain;
+  },
+
+  /**
+   * Valid position is an integer within the current chain boundaries
+   * @param position
+   * @throws Error if position is not valid
+   */
+  validatePosition(position) {
+    const positionAsNum = +position;
+    if (Number.isNaN(positionAsNum)) {
+      throw Error(`${position} is an invalid position. Must be an integer`);
+    }
+    const chainIndex = positionAsNum - 1;
+    if (chainIndex < 0 || chainIndex >= this.chain.length) {
+      throw Error(`There is no link at position ${position}`);
+    }
   }
 };
 
